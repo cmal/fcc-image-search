@@ -26,7 +26,7 @@ client.connect(dburl, function(err, connection) {
 });
 
 app.get("/", function(req, res) {
-  res.send("Image Search Abstract Layer. Sample Usage: /api/imagesearch?q=locat ");
+  res.send("Image Search Abstract Layer. Sample Usage: /api/imagesearch?q=lolcats%20funny");
 });
 
 app.get("/api/imagesearch", function(req, res, next) {
