@@ -46,6 +46,7 @@ app.get("/api/imagesearch", function(req, res, next) {
     console.log('headers: ', resp.headers);
     resp.on('data', function(chunk) {
       console.log("chunk",chunk);
+      
       var data = chunk.toString('utf8');
       json = JSON.parse(data);
       if (json.hasOwnProperty("items")) {
