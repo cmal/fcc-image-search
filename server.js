@@ -42,8 +42,8 @@ app.get("/api/imagesearch", function(req, res, next) {
     console.log('statusCode: ', response.statusCode);
     response.pipe(bl(function(err, data) {
       if (err) { return console.error(err); }
-      console.log("data: ",data.toString()); // chunk is a <Buffer ...>
-      json = JSON.parse(JSON.stringify(data.toString()));
+      //console.log("data: ",data.toString()); // chunk is a <Buffer ...>
+      json = JSON.parse(data.toString());
       if (json.hasOwnProperty("items")) {
         items.forEach(function(item) {
           obj = {
@@ -57,8 +57,8 @@ app.get("/api/imagesearch", function(req, res, next) {
       } else {
         newjson = {error: "error"};
       }
+      res.send(JSON.stringify(newjson));
     }));
-    res.send(JSON.stringify(newjson));
   });
   /* 
   request.end();
