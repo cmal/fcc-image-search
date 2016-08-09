@@ -2,6 +2,7 @@ var express = require('express');
 var https = require('https');
 var app = express();
 app.enable('trust proxy');
+var StringDecoder = require('string_decoder').StringDecoder;
 
 // export MLAB_LITTLE_URL_URI="mongodb://user:pass@ds042729.mlab.com:42729/little-url"
 // heroku config:set MLAB_LITTLE_URL_URI=mongodb://user:pass@ds042729.mlab.com:42729/little-url
@@ -47,7 +48,9 @@ app.get("/api/imagesearch", function(req, res, next) {
     resp.on('data', function(chunk) {
       console.log("chunk",chunk);
       
-      var data = chunk.toString('utf8');
+      //var data = chunk.toString('utf8');
+      var decoder = new StringDecoder('utf8');
+      var data = decoder.write(chunk);
       json = JSON.parse(data);
       if (json.hasOwnProperty("items")) {
         items.forEach(function(item) {
