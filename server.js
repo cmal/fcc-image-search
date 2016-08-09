@@ -35,8 +35,8 @@ app.get("/api/imagesearch", function(req, res, next) {
   console.log(typeof req.query.offset);
   var start = +req.query.offset;
   if (isNaN(start)) { start = 0; }
-  var url = "www.googleapis.com/customsearch/v1?q="+query+"&cx=006064609831781604018%3A_1uwtb4z7jw&num=10&searchType=image&start=10&key="+ apiKey + ( start ? ("&start="+start) : "" );
-  console.log(url);
+  var url = "https://www.googleapis.com/customsearch/v1?q="+query+"&cx=006064609831781604018%3A_1uwtb4z7jw&num=10&searchType=image&start=10&key="+ apiKey + ( start ? ("&start="+start) : "" );
+  /* console.log(url); */
   var newjson = [];
   var request = https.get(url, function(response) {
     console.log('statusCode: ', response.statusCode);
