@@ -47,7 +47,7 @@ app.get("/api/imagesearch", function(req, res, next) {
       if (json.hasOwnProperty("items")) {
         json.items.forEach(function(item) {
           obj = {
-            url: item.image.link,
+            url: item.link,
             snippet: item.snippet,
             thumbnail: item.image.thumbnailLink,
             context: item.image.contextLink
