@@ -62,13 +62,13 @@ app.get("/api/imagesearch", function(req, res, next) {
       } else {
         newjson = {error: "error"};
       }
-   });
+    });
+    res.send(JSON.stringify(newjson));
   });
   request.end();
   request.on('error', function(err) {
     console.log(err);
   });
-  res.send(JSON.stringify(newjson));
 });
 
 app.get("/api/latest/imagesearch/", function(req, res) {
