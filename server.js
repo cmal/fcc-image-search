@@ -35,11 +35,10 @@ app.get("/api/imagesearch", function(req, res, next) {
     return;
   }
   collection.insertOne({ term: decodeURIComponent(req.query.q), when: new Date() });
-  // console.log(typeof req.query.offset);
   var start = +req.query.offset;
+  console.log(start, typeof start);
   if (isNaN(start)) { start = 0; }
   var url = "https://www.googleapis.com/customsearch/v1?q="+req.query.q+"&cx=006064609831781604018%3A_1uwtb4z7jw&num=10&searchType=image&start=10&key="+ apiKey + ( start ? ("&start="+start) : "" );
-  /* console.log(url); */
   var newjson = [];
   var request = https.get(url, function(response) {
     console.log('statusCode: ', response.statusCode);
@@ -73,7 +72,7 @@ app.get("/api/imagesearch", function(req, res, next) {
 app.get("/api/latest/imagesearch/", function(req, res) {
   collection.find({
     'when': { $gte: new Date(new Date().getTime() - 24*60*60*1000) }
-  }).limit(10).toArray(function(err, items) {
+  }).limit(10).sort({ when: -1 }).toArray(function(err, items) {
     if (err) { return console.error(err); }
     console.log(items);
     items.forEach(function(item) {
