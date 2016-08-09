@@ -40,6 +40,7 @@ app.get("/api/imagesearch", function(req, res, next) {
     method: 'GET'
   };
   console.log(options.path);
+  var newjson = [];
   var request = https.request(options, function(resp) {
     console.log('statusCode: ', resp.statusCode);
     console.log('headers: ', resp.headers);
@@ -47,7 +48,6 @@ app.get("/api/imagesearch", function(req, res, next) {
       console.log(data);
       json = JSON.parse(data);
       if (json.hasOwnProperty("items")) {
-        var newjson = [];
         items.forEach(function(item) {
           obj = {
             url: item.image.link,
@@ -57,9 +57,8 @@ app.get("/api/imagesearch", function(req, res, next) {
           };
           newjson.push(obj);
         });
-        res.send(JSON.stringify(newjson));
       } else {
-        res.send(JSON.stringify({error: "unknown"}));
+        newjson = {error: "error"};
       }
    });
   });
@@ -67,6 +66,7 @@ app.get("/api/imagesearch", function(req, res, next) {
   request.on('error', function(err) {
     console.log(err);
   });
+  res.send(JSON.stringify(newjson));
 });
 
 app.get("/api/latest/imagesearch/", function(req, res) {
