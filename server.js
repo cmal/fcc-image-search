@@ -30,13 +30,15 @@ app.get("/", function(req, res) {
 });
 
 app.get("/api/imagesearch", function(req, res, next) {
-  var query = encodeURIComponent(req.query.q);
-  collection.insertOne({ term: query, when: new Date() });
-  if (!(query)) { res.send("use /api/imagesearch?q=<SEARCH_STRING> to start your search"); }
+  if (!(req.query.q)) {
+    res.send("use /api/imagesearch?q=<SEARCH_STRING> to start your search");
+    return;
+  }
+  collection.insertOne({ term: decodeURIComponent(req.query.q), when: new Date() });
   // console.log(typeof req.query.offset);
   var start = +req.query.offset;
   if (isNaN(start)) { start = 0; }
-  var url = "https://www.googleapis.com/customsearch/v1?q="+query+"&cx=006064609831781604018%3A_1uwtb4z7jw&num=10&searchType=image&start=10&key="+ apiKey + ( start ? ("&start="+start) : "" );
+  var url = "https://www.googleapis.com/customsearch/v1?q="+req.query.q+"&cx=006064609831781604018%3A_1uwtb4z7jw&num=10&searchType=image&start=10&key="+ apiKey + ( start ? ("&start="+start) : "" );
   /* console.log(url); */
   var newjson = [];
   var request = https.get(url, function(response) {
@@ -71,14 +73,15 @@ app.get("/api/imagesearch", function(req, res, next) {
 app.get("/api/latest/imagesearch/", function(req, res) {
   collection.find({
     'when': { $gte: new Date(new Date().getTime() - 24*60*60*1000) }
-  }).toArray(function(items) {
+  }).limit(10).toArray(function(err, items) {
+    if (err) { return console.error(err); }
     console.log(items);
     items.forEach(function(item) {
       item.when = item.when.toString();
+      delete item._id;
     });
     res.send(JSON.stringify(items));
   });
-  res.send("latest imagesearch");
 });
 
 var port = process.env.PORT || 8080;
