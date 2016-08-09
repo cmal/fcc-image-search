@@ -41,12 +41,26 @@ app.get("/api/imagesearch", function(req, res, next) {
   };
   console.log(options.path);
   var request = https.request(options, function(resp) {
-   console.log('statusCode: ', resp.statusCode);
-   console.log('headers: ', resp.headers);
-   resp.on('data', function(data) {
-     console.log(data);
-     json = JSON.parse(data);
-     res.send(data);
+    console.log('statusCode: ', resp.statusCode);
+    console.log('headers: ', resp.headers);
+    resp.on('data', function(data) {
+      console.log(data);
+      json = JSON.parse(data);
+      if (json.hasOwnProperty("items")) {
+        var newjson = [];
+        items.forEach(function(item) {
+          obj = {
+            url: item.image.link,
+            snippet: item.snippet,
+            thumbnail: item.image.thumbnailLink,
+            context:item.image.contextLink
+          };
+          newjson.push(obj);
+        });
+        res.send(JSON.stringify(newjson));
+      } else {
+        res.send(JSON.stringify({error: "unknown"}));
+      }
    });
   });
   request.end();
