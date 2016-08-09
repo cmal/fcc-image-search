@@ -45,7 +45,7 @@ app.get("/api/imagesearch", function(req, res, next) {
       //console.log("data: ",data.toString()); // chunk is a <Buffer ...>
       json = JSON.parse(data.toString());
       if (json.hasOwnProperty("items")) {
-        items.forEach(function(item) {
+        json.items.forEach(function(item) {
           obj = {
             url: item.image.link,
             snippet: item.snippet,
