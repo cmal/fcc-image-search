@@ -31,6 +31,7 @@ app.get("/", function(req, res) {
 
 app.get("/api/imagesearch", function(req, res, next) {
   var query = encodeURIComponent(req.query.q);
+  collection.insertOne({ term: query, when: new Date() });
   if (!(query)) { res.send("use /api/imagesearch?q=<SEARCH_STRING> to start your search"); }
   console.log(typeof req.query.offset);
   var start = +req.query.offset;
@@ -68,6 +69,12 @@ app.get("/api/imagesearch", function(req, res, next) {
 });
 
 app.get("/api/latest/imagesearch/", function(req, res) {
+  collection.find({
+    'when': { $lte: new Date(new Date().getTime() - 24*60*60*1000) }
+  }).then(function(items) {
+    console.log(items);
+    res.send(JSON.stringify(items));
+  });
   res.send("latest imagesearch");
 });
 
