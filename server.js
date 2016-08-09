@@ -2,7 +2,7 @@ var express = require('express');
 var https = require('https');
 var app = express();
 app.enable('trust proxy');
-var StringDecoder = require('string_decoder').StringDecoder;
+var bl = require('bl');
 
 // export MLAB_LITTLE_URL_URI="mongodb://user:pass@ds042729.mlab.com:42729/little-url"
 // heroku config:set MLAB_LITTLE_URL_URI=mongodb://user:pass@ds042729.mlab.com:42729/little-url
@@ -35,19 +35,15 @@ app.get("/api/imagesearch", function(req, res, next) {
   console.log(typeof req.query.offset);
   var start = +req.query.offset;
   if (isNaN(start)) { start = 0; }
-  var options = {
-    hostname: 'www.googleapis.com',
-    path: '/customsearch/v1?q='+query+"&cx=006064609831781604018%3A_1uwtb4z7jw&num=10&searchType=image&start=10&key="+ apiKey + ( start ? ("&start="+start) : "" ),
-    method: 'GET'
-  };
-  console.log(options.path);
+  var url = "www.googleapis.com/customsearch/v1?q="+query+"&cx=006064609831781604018%3A_1uwtb4z7jw&num=10&searchType=image&start=10&key="+ apiKey + ( start ? ("&start="+start) : "" );
+  console.log(url);
   var newjson = [];
-  var request = https.request(options, function(resp) {
-    console.log('statusCode: ', resp.statusCode);
-    console.log('headers: ', resp.headers);
-    resp.on('data', function(chunk) {
-      console.log("chunk",chunk); // chunk is a <Buffer ...>
-      json = JSON.parse(JSON.stringify(chunk));
+  var request = https.get(url, function(response) {
+    console.log('statusCode: ', response.statusCode);
+    response.pipe(bl(function(err, data) {
+      if (err) { return console.error(err); }
+      console.log("data: ",data.toString()); // chunk is a <Buffer ...>
+      json = JSON.parse(JSON.stringify(data.toString()));
       if (json.hasOwnProperty("items")) {
         items.forEach(function(item) {
           obj = {
@@ -61,13 +57,14 @@ app.get("/api/imagesearch", function(req, res, next) {
       } else {
         newjson = {error: "error"};
       }
-    });
+    }));
     res.send(JSON.stringify(newjson));
   });
+  /* 
   request.end();
   request.on('error', function(err) {
     console.log(err);
-  });
+  }); */
 });
 
 app.get("/api/latest/imagesearch/", function(req, res) {
