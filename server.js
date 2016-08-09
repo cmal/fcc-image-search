@@ -46,12 +46,8 @@ app.get("/api/imagesearch", function(req, res, next) {
     console.log('statusCode: ', resp.statusCode);
     console.log('headers: ', resp.headers);
     resp.on('data', function(chunk) {
-      console.log("chunk",chunk);
-      
-      //var data = chunk.toString('utf8');
-      var decoder = new StringDecoder('utf8');
-      var data = decoder.write(chunk);
-      json = JSON.parse(data);
+      console.log("chunk",chunk); // chunk is a <Buffer ...>
+      json = JSON.parse(JSON.stringify(chunk));
       if (json.hasOwnProperty("items")) {
         items.forEach(function(item) {
           obj = {
