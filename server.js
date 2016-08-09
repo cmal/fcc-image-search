@@ -30,15 +30,17 @@ app.get("/", function(req, res) {
 });
 
 app.get("/api/imagesearch", function(req, res, next) {
-  if (!(req.query.q)) {
+  var query = encodeURIComponent(req.query.q);
+  if (!(query)) {
     res.send("use /api/imagesearch?q=<SEARCH_STRING> to start your search");
     return;
   }
-  collection.insertOne({ term: decodeURIComponent(req.query.q), when: new Date() });
+  collection.insertOne({ term: req.query.q, when: new Date() });
   var start = +req.query.offset;
   console.log(start, typeof start);
   if (isNaN(start)) { start = 0; }
-  var url = "https://www.googleapis.com/customsearch/v1?q="+req.query.q+"&cx=006064609831781604018%3A_1uwtb4z7jw&num=10&searchType=image&start=10&key="+ apiKey + ( start ? ("&start="+start) : "" );
+  var url = "https://www.googleapis.com/customsearch/v1?q="+query+"&cx=006064609831781604018%3A_1uwtb4z7jw&num=10&searchType=image&key="+ apiKey + ( start ? ("&start="+start) : "" );
+  console.log('url:', url);
   var newjson = [];
   var request = https.get(url, function(response) {
     console.log('statusCode: ', response.statusCode);
