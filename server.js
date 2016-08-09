@@ -44,9 +44,10 @@ app.get("/api/imagesearch", function(req, res, next) {
   var request = https.request(options, function(resp) {
     console.log('statusCode: ', resp.statusCode);
     console.log('headers: ', resp.headers);
-    resp.on('data', function(httpsdata) {
-      console.log("data",httpsdata);
-      json = JSON.parse(httpsdata);
+    resp.on('data', function(chunk) {
+      console.log("chunk",chunk);
+      var data = chunk.toString('utf8');
+      json = JSON.parse(data);
       if (json.hasOwnProperty("items")) {
         items.forEach(function(item) {
           obj = {
