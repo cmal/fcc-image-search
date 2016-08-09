@@ -43,7 +43,7 @@ app.get("/api/imagesearch", function(req, res, next) {
             + "&cx=006064609831781604018%3A_1uwtb4z7jw&num=10&searchType=image&key="
             + apiKey
             + "&start="
-            + ( isNaN(start) ? 1 : start+1 );
+            + ( (isNaN(start) || start < 0) ? 1 : start+1 );
   console.log('url:', url);
   var newjson = [];
   var request = https.get(url, function(response) {
